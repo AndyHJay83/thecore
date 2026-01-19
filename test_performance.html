@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+</head>
+<body>
+    <h1>Wordlist Loading Performance Test</h1>
+    <button onclick="testGzip()">Test Gzip Loading</button>
+    <button onclick="testText()">Test Text Loading</button>
+    <div id="results"></div>
+
+    <script>
+        async function testGzip() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing gzip loading...</p>';
+            
+            const startTime = performance.now();
+            
+            try {
+                console.log('=== GZIP TEST START ===');
+                
+                // Fetch gzipped file
+                const fetchStart = performance.now();
+                const response = await fetch('words/134K.txt.gz');
+                const fetchTime = performance.now() - fetchStart;
+                console.log(`Fetch time: ${fetchTime.toFixed(2)}ms`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch gzipped file');
+                }
+                
+                // Get array buffer
+                const bufferStart = performance.now();
+                const arrayBuffer = await response.arrayBuffer();
+                const bufferTime = performance.now() - bufferStart;
+                console.log(`ArrayBuffer time: ${bufferTime.toFixed(2)}ms`);
+                console.log('ArrayBuffer size:', arrayBuffer.byteLength, 'bytes');
+                
+                // Decompress
+                const decompressStart = performance.now();
+                const decompressed = pako.inflate(new Uint8Array(arrayBuffer), { to: 'string' });
+                const decompressTime = performance.now() - decompressStart;
+                console.log(`Decompression time: ${decompressTime.toFixed(2)}ms`);
+                console.log('Decompressed size:', decompressed.length, 'characters');
+                
+                // Process words
+                const processStart = performance.now();
+                const lines = decompressed.split('\n');
+                const wordSet = new Set();
+                for (let i = 0; i < lines.length; i++) {
+                    const trimmed = lines[i].trim();
+                    if (trimmed) {
+                        wordSet.add(trimmed);
+                    }
+                }
+                const words = Array.from(wordSet);
+                const processTime = performance.now() - processStart;
+                console.log(`Processing time: ${processTime.toFixed(2)}ms`);
+                console.log('Word count:', words.length);
+                
+                const totalTime = performance.now() - startTime;
+                console.log(`Total time: ${totalTime.toFixed(2)}ms`);
+                console.log('=== GZIP TEST END ===');
+                
+                results.innerHTML = `
+                    <h3>Gzip Test Results:</h3>
+                    <p>Fetch: ${fetchTime.toFixed(2)}ms</p>
+                    <p>Buffer: ${bufferTime.toFixed(2)}ms</p>
+                    <p>Decompress: ${decompressTime.toFixed(2)}ms</p>
+                    <p>Process: ${processTime.toFixed(2)}ms</p>
+                    <p><strong>Total: ${totalTime.toFixed(2)}ms</strong></p>
+                    <p>Words: ${words.length}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Gzip test failed:', error);
+                results.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testText() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing text loading...</p>';
+            
+            const startTime = performance.now();
+            
+            try {
+                console.log('=== TEXT TEST START ===');
+                
+                // Fetch text file
+                const fetchStart = performance.now();
+                const response = await fetch('words/134K.txt');
+                const fetchTime = performance.now() - fetchStart;
+                console.log(`Fetch time: ${fetchTime.toFixed(2)}ms`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch text file');
+                }
+                
+                // Get text
+                const textStart = performance.now();
+                const text = await response.text();
+                const textTime = performance.now() - textStart;
+                console.log(`Text time: ${textTime.toFixed(2)}ms`);
+                console.log('Text size:', text.length, 'characters');
+                
+                // Process words
+                const processStart = performance.now();
+                const lines = text.split('\n');
+                const wordSet = new Set();
+                for (let i = 0; i < lines.length; i++) {
+                    const trimmed = lines[i].trim();
+                    if (trimmed) {
+                        wordSet.add(trimmed);
+                    }
+                }
+                const words = Array.from(wordSet);
+                const processTime = performance.now() - processStart;
+                console.log(`Processing time: ${processTime.toFixed(2)}ms`);
+                console.log('Word count:', words.length);
+                
+                const totalTime = performance.now() - startTime;
+                console.log(`Total time: ${totalTime.toFixed(2)}ms`);
+                console.log('=== TEXT TEST END ===');
+                
+                results.innerHTML = `
+                    <h3>Text Test Results:</h3>
+                    <p>Fetch: ${fetchTime.toFixed(2)}ms</p>
+                    <p>Text: ${textTime.toFixed(2)}ms</p>
+                    <p>Process: ${processTime.toFixed(2)}ms</p>
+                    <p><strong>Total: ${totalTime.toFixed(2)}ms</strong></p>
+                    <p>Words: ${words.length}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Text test failed:', error);
+                results.innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html> 

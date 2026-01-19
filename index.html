@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#f0f0f0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-title" content="The Core">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>The Core</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The Core</h1>
+            <button id="settingsButton" class="settings-button">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+        
+        <!-- Homepage Content -->
+        <div id="homepage" class="homepage-content">
+            <div class="selection-container">
+                <div class="dropdown-group">
+                    <label for="workflowSelect">Select Workflow:</label>
+                    <div class="dropdown">
+                        <select id="workflowSelect">
+                            <option value="">Select a workflow...</option>
+                            <option value="create-new">New Workflow</option>
+                        </select>
+                        <div class="custom-select">
+                            <div class="selected-text">Select a workflow...</div>
+                            <div class="options-list"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown-group">
+                    <label for="wordlistSelect">Select Wordlist:</label>
+                    <div class="dropdown">
+                        <select id="wordlistSelect" class="wordlist-select">
+                            <option value="enuk">Long Nouns 3911</option>
+                            <option value="19127">19127 Wordlist</option>
+                            <option value="emotions">Emotions Jobs Spirit Animals</option>
+                            <option value="134k">134K Wordlist</option>
+                            <option value="boysnames">Boys Names</option>
+                            <option value="girlsnames">Girls Names</option>
+                            <option value="allnames">All Names</option>
+                            <option value="colouritems">Colour Items</option>
+                            <option value="months_starsigns">Months & Starsigns</option>
+                        </select>
+                        <div class="custom-select">
+                            <div class="selected-text">ENUK Wordlist</div>
+                            <div class="options-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="performButton" class="perform-button">PERFORM</button>
+            <button id="createWorkflowButton" class="create-button">New Workflow</button>
+        </div>
+
+        <!-- Workflow Creation Page -->
+        <div id="workflowCreation" style="display: none;">
+            <div class="workflow-creation">
+                <!-- Header with Create/Cancel buttons -->
+                <div class="workflow-header">
+                    <h2>Create Workflow</h2>
+                    <button id="cancelWorkflowButton" class="cancel-button">Cancel</button>
+                </div>
+
+                <!-- Workflow name input section -->
+                <div class="workflow-name-section">
+                    <input type="text" id="workflowName" class="workflow-name-input" placeholder="Enter workflow name">
+                    <button id="saveWorkflowButton" class="save-workflow-button">Save Workflow</button>
+                    <button id="toggleSavedWorkflows" class="toggle-saved-workflows">View Saved Workflows</button>
+                </div>
+
+                <!-- Features section -->
+                <div class="workflow-content">
+                    <!-- Available Features -->
+                    <div class="available-features">
+                        <h3>Available Features</h3>
+                        <div id="availableFeatures">
+                            <div class="feature-group">
+                                <button class="feature-button t9-mode-button" id="t9ModeButton" draggable="false">T9</button>
+                                <button class="info-button" data-feature="t9Mode"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button alphanumeric-mode-button" id="alphanumericModeButton" draggable="false">Alpha-Numeric</button>
+                                <button class="info-button" data-feature="alphanumericMode"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="position1" draggable="true">Short Word</button>
+                                <button class="info-button" data-feature="position1"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="consMid" draggable="true">3 LETTER WORD</button>
+                                <button class="info-button" data-feature="consMid"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="consMid2" draggable="true">Cons MID</button>
+                                <button class="info-button" data-feature="consMid2"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="vowel" draggable="true">Vowel</button>
+                                <button class="info-button" data-feature="vowel"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group" style="display: none;">
+                                <button class="feature-button" data-feature="vowel2" draggable="true">VOWEL2</button>
+                                <button class="info-button" data-feature="vowel2"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="vowelPos" draggable="true">VOWEL POS</button>
+                                <button class="info-button" data-feature="vowelPos"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="name" draggable="true">NAME</button>
+                                <button class="info-button" data-feature="name"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="o" draggable="true">O?</button>
+                                <button class="info-button" data-feature="o"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="lexicon" draggable="true">Curved Pos.</button>
+                                <button class="info-button" data-feature="lexicon"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="eee" draggable="true">EEE?</button>
+                                <button class="info-button" data-feature="eee"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="eeeFirst" draggable="true">EEEFIRST</button>
+                                <button class="info-button" data-feature="eeeFirst"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="originalLex" draggable="true">Lexicon</button>
+                                <button class="info-button" data-feature="originalLex"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="consonant" draggable="true">Cons. Together</button>
+                                <button class="info-button" data-feature="consonant"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="colour3" draggable="true">Colour3</button>
+                                <button class="info-button" data-feature="colour3"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="length" draggable="true">LENGTH</button>
+                                <button class="info-button" data-feature="length"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="mostFrequent" draggable="true">MOST FREQUENT</button>
+                                <button class="info-button" data-feature="mostFrequent"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="leastFrequent" draggable="true">LEAST FREQUENT</button>
+                                <button class="info-button" data-feature="leastFrequent"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="notIn" draggable="true">NOT IN</button>
+                                <button class="info-button" data-feature="notIn"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="abcde" draggable="true">ABCDE</button>
+                                <button class="info-button" data-feature="abcde"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="abc" draggable="true">ABC</button>
+                                <button class="info-button" data-feature="abc"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="findEee" draggable="true">FIND-EEE</button>
+                                <button class="info-button" data-feature="findEee"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="positionCons" draggable="true">POSITION-CONS</button>
+                                <button class="info-button" data-feature="positionCons"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="firstCurved" draggable="true">FIRST CURVED</button>
+                                <button class="info-button" data-feature="firstCurved"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="pin" draggable="true">PIN</button>
+                                <button class="info-button" data-feature="pin"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="pianoForte" draggable="true">PIANO FORTE</button>
+                                <button class="info-button" data-feature="pianoForte"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="pianoPiano" draggable="true">PIANO PIANO</button>
+                                <button class="info-button" data-feature="pianoPiano"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="dictionaryAlpha" draggable="true">Dictionary (Alpha)</button>
+                                <button class="info-button" data-feature="dictionaryAlpha"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                            <div class="feature-group">
+                                <button class="feature-button" data-feature="smlLength" draggable="true">S/M/L (Length)</button>
+                                <button class="info-button" data-feature="smlLength"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Features -->
+                    <div class="selected-features">
+                        <h3>Selected</h3>
+                        <div id="selectedFeaturesList"></div>
+                    </div>
+                </div>
+
+                <!-- Saved Workflows Section -->
+                <div id="savedWorkflows" class="saved-workflows">
+                    <h3>Saved Workflows</h3>
+                    <div class="saved-workflow-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Execution Area -->
+        <div id="workflowExecution" class="workflow-execution" style="display: none;">
+            <div id="results" class="results-container"></div>
+            
+            <!-- Feature sections -->
+            <div id="featureArea" class="feature-area">
+                <!-- ORIGINAL LEX Feature -->
+                <div id="originalLexFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">LEXICON</div>
+                    <div class="original-lex-display">
+                        <div class="position-display">Position <span id="originalLexPosition">-</span></div>
+                        <div class="letters-display">Letters: <span id="originalLexLetters">-</span></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="originalLexInput" placeholder="Enter a word...">
+                        <button id="originalLexButton">DONE</button>
+                        <button id="originalLexSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- EEE? feature -->
+                <div id="eeeFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">EEE?</div>
+                    <div class="button-container">
+                        <button id="eeeButton" class="yes-btn">E</button>
+                        <button id="eeeYesBtn" class="yes-btn">YES</button>
+                        <button id="eeeNoBtn" class="no-btn">NO</button>
+                    </div>
+                </div>
+
+                <!-- EEEfirst feature -->
+                <div id="eeeFirstFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">EEEFIRST</div>
+                    <div class="button-container">
+                        <button id="eeeFirstButton" class="yes-btn">E</button>
+                        <button id="eeeFirstYesBtn" class="yes-btn">YES</button>
+                        <button id="eeeFirstNoBtn" class="no-btn">NO</button>
+                    </div>
+                    <button id="eeeFirstSkipButton" class="skip-button">SKIP</button>
+                </div>
+
+                <!-- O? feature -->
+                <div id="oFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">O?</div>
+                    <div class="button-container">
+                        <button id="oYesBtn" class="yes-btn">YES</button>
+                        <button id="oNoBtn" class="no-btn">NO</button>
+                        <button id="oSkipBtn" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- CURVED feature -->
+                <div id="curvedFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">CURVED</div>
+                    <div class="curved-buttons">
+                        <button class="curved-btn">B</button>
+                        <button class="curved-btn">C</button>
+                        <button class="curved-btn">D</button>
+                        <button class="curved-btn">G</button>
+                        <button class="curved-btn">J</button>
+                        <button class="curved-btn">O</button>
+                        <button class="curved-btn">P</button>
+                        <button class="curved-btn">Q</button>
+                        <button class="curved-btn">R</button>
+                        <button class="curved-btn">S</button>
+                        <button class="curved-btn">U</button>
+                    </div>
+                    <button id="curvedSkipBtn" class="skip-button">SKIP</button>
+                </div>
+
+                <!-- COLOUR3 feature -->
+                <div id="colour3Feature" class="feature-section" style="display: none;">
+                    <div class="feature-title">COLOUR3</div>
+                    <div class="button-container">
+                        <button id="colour3YesBtn" class="yes-btn">YES</button>
+                        <button id="colour3SkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- LEXICON feature -->
+                <div id="lexiconFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">LEXICON</div>
+                    <div class="lexicon-input">
+                        <input type="text" id="lexiconInput" placeholder="Enter positions (e.g., 14)">
+                        <button id="lexiconButton">DONE</button>
+                    </div>
+                    <button id="lexiconSkipButton" class="skip-button">SKIP</button>
+                </div>
+
+                <!-- Consonant question section -->
+                <div id="consonantQuestion" class="feature-section" style="display: none;">
+                    <div class="feature-title">Consonants together?</div>
+                    <div class="button-container">
+                        <button id="consonantYesBtn" class="yes-btn">YES</button>
+                        <button id="consonantNoBtn" class="no-btn">NO</button>
+                    </div>
+                </div>
+
+                <!-- Position 1 feature -->
+                <div id="position1Feature" class="feature-section" style="display: none;">
+                    <div class="feature-title">Short Word</div>
+                    <div class="position-input">
+                        <input type="text" id="position1Input" placeholder="Enter a word...">
+                        <button id="position1Button">DONE</button>
+                        <button id="position1DoneButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- 3 LETTER WORD feature -->
+                <div id="consMidFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">3 LETTER WORD</div>
+                    <div class="position-input">
+                        <input type="text" id="consMidInput" placeholder="Enter a word...">
+                        <button id="consMidButton">DONE</button>
+                        <button id="consMidDoneButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Cons MID feature -->
+                <div id="consMid2Feature" class="feature-section" style="display: none;">
+                    <div class="feature-title">Cons MID</div>
+                    <div class="position-input">
+                        <input type="text" id="consMid2Input" placeholder="Enter a word...">
+                        <button id="consMid2Button">DONE</button>
+                        <button id="consMid2DoneButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Vowel feature -->
+                <div id="vowelFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">VOWEL</div>
+                    <div class="vowel-letter"></div>
+                    <div class="button-container">
+                        <button class="vowel-btn yes-btn">YES</button>
+                        <button class="vowel-btn no-btn">NO</button>
+                    </div>
+                    <div class="position-buttons">
+                        <button class="position-btn" data-position="1">1</button>
+                        <button class="position-btn" data-position="2">2</button>
+                        <button class="position-btn" data-position="3">3</button>
+                        <button class="position-btn" data-position="4">4</button>
+                        <button class="position-btn" data-position="5">5</button>
+                        <button class="position-btn" data-position="6">6</button>
+                        <button class="position-btn" data-position="7">7</button>
+                        <button class="position-btn" data-position="8">8</button>
+                    </div>
+                </div>
+
+                <!-- Vowel2 feature -->
+                <div id="vowel2Feature" class="feature-section" style="display: none;">
+                    <div class="feature-title">VOWEL2</div>
+                    <div class="vowel-letter"></div>
+                    <div class="button-container">
+                        <button class="vowel-btn yes-btn">YES</button>
+                        <button class="vowel-btn no-btn">NO</button>
+                    </div>
+                    <div class="section-buttons">
+                        <button class="section-btn" data-section="start">START</button>
+                        <button class="section-btn" data-section="middle">MIDDLE</button>
+                        <button class="section-btn" data-section="end">END</button>
+                    </div>
+                </div>
+
+                <!-- VOWEL POS feature -->
+                <div id="vowelPosFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">VOWEL POS</div>
+                    <div class="vowel-letter"></div>
+                    <div class="button-container">
+                        <button class="vowel-btn yes-btn">YES</button>
+                        <button class="vowel-btn no-btn">NO</button>
+                    </div>
+                    <div class="section-buttons">
+                        <button class="section-btn" data-section="begin">BEGIN</button>
+                        <button class="section-btn" data-section="mid">MID</button>
+                        <button class="section-btn" data-section="end">END</button>
+                    </div>
+                </div>
+
+                <!-- NAME feature -->
+                <div id="nameFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">NAME</h2>
+                    <div class="name-input-container" style="margin: 20px 0;">
+                        <input type="text" id="nameInput" placeholder="Enter full name (e.g., John Smith)" style="padding: 10px; width: 100%; max-width: 300px; font-size: 16px;">
+                    </div>
+                    <div class="vowel-buttons" style="display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+                        <button class="vowel-btn" data-vowel="a">A</button>
+                        <button class="vowel-btn" data-vowel="e">E</button>
+                        <button class="vowel-btn" data-vowel="i">I</button>
+                        <button class="vowel-btn" data-vowel="o">O</button>
+                        <button class="vowel-btn" data-vowel="u">U</button>
+                    </div>
+                    <div class="section-buttons" style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+                        <button class="section-btn" data-section="start">START</button>
+                        <button class="section-btn" data-section="middle">MID</button>
+                        <button class="section-btn" data-section="end">END</button>
+                    </div>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <button id="nameSubmitButton" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">SUBMIT</button>
+                        <button id="nameNoVowelButton" style="padding: 10px 20px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">NO VOWEL</button>
+                        <button id="nameSkipButton" class="skip-button" style="margin-left: 10px;">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Shape feature -->
+                <div id="shapeFeature" class="feature-section" style="display: none;">
+                    <div class="shape-display">
+                        <div class="position-display"></div>
+                        <div class="category-buttons"></div>
+                    </div>
+                </div>
+
+                <!-- Length feature -->
+                <div id="lengthFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">LENGTH</h2>
+                    <div class="length-input">
+                        <input type="text" id="lengthInput" placeholder="Enter length (3+)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="3">
+                        <button id="lengthButton">SUBMIT</button>
+                        <button id="lengthSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Most Frequent feature -->
+                <div id="mostFrequentFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">MOST FREQUENT</h2>
+                    <div class="frequent-letter-display">
+                        <div class="letter">-</div>
+                    </div>
+                    <div class="button-container">
+                        <button id="frequentYesBtn" class="yes-btn">YES</button>
+                        <button id="frequentNoBtn" class="no-btn">NO</button>
+                        <button id="frequentSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+                <div id="leastFrequentFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">LEAST FREQUENT</h2>
+                    <div class="frequent-letter-display">
+                        <div class="letter">-</div>
+                    </div>
+                    <div class="button-container">
+                        <button id="leastFrequentYesBtn" class="yes-btn">YES</button>
+                        <button id="leastFrequentNoBtn" class="no-btn">NO</button>
+                        <button id="leastFrequentSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- NOT IN feature -->
+                <div id="notInFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">NOT IN</h2>
+                    <div class="input-group">
+                        <input type="text" id="notInInput" placeholder="Enter letters...">
+                        <button id="notInButton">SUBMIT</button>
+                        <button id="notInSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- ABCDE feature -->
+                <div id="abcdeFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">ABCDE</h2>
+                    <div class="abcde-row" style="display: flex; justify-content: center; gap: 10px;">
+                        <button class="abcde-btn" data-letter="A">A</button>
+                        <button class="abcde-btn" data-letter="B">B</button>
+                        <button class="abcde-btn" data-letter="C">C</button>
+                        <button class="abcde-btn" data-letter="D">D</button>
+                        <button class="abcde-btn" data-letter="E">E</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="abcdeDoneButton">DONE</button>
+                        <button id="abcdeNoneButton" class="none-button">NONE</button>
+                        <button id="abcdeSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- ABC feature -->
+                <div id="abcFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">ABC</h2>
+                    <div class="abc-row" style="display: flex; justify-content: center; gap: 10px;">
+                        <button class="abc-btn" data-letter="A">A</button>
+                        <button class="abc-btn" data-letter="B">B</button>
+                        <button class="abc-btn" data-letter="C">C</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="abcDoneButton">DONE</button>
+                        <button id="abcNoneButton" class="none-button">NONE</button>
+                        <button id="abcSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- FIND-EEE feature -->
+                <div id="findEeeFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">FIND-EEE</h2>
+                    <div class="find-eee-row" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <button class="find-eee-btn" data-letter="B">B</button>
+                        <button class="find-eee-btn" data-letter="C">C</button>
+                        <button class="find-eee-btn" data-letter="D">D</button>
+                        <button class="find-eee-btn" data-letter="E">E</button>
+                        <button class="find-eee-btn" data-letter="G">G</button>
+                        <button class="find-eee-btn" data-letter="P">P</button>
+                        <button class="find-eee-btn" data-letter="T">T</button>
+                        <button class="find-eee-btn" data-letter="V">V</button>
+                        <button class="find-eee-btn" data-letter="Z">Z</button>
+                    </div>
+                    <div class="find-eee-position-row" style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+                        <button class="find-eee-position-btn" data-position="1">1</button>
+                        <button class="find-eee-position-btn" data-position="2">2</button>
+                        <button class="find-eee-position-btn" data-position="3">3</button>
+                        <button class="find-eee-position-btn" data-position="4">4</button>
+                        <button class="find-eee-position-btn" data-position="5">5</button>
+                        <button class="find-eee-position-btn" data-position="6">6</button>
+                        <button class="find-eee-position-btn" data-position="7">7</button>
+                        <button class="find-eee-position-btn" data-position="8">8</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="findEeeSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- POSITION-CONS feature -->
+                <div id="positionConsFeature" class="feature-section" style="display: none;">
+                    <div class="feature-title">POSITION-CONS</div>
+                    <div class="position-cons-form">
+                        <div class="position-cons-main-layout">
+                            <div class="position-cons-left">
+                                <div class="position-cons-input-group">
+                                    <label for="positionConsPosition">Position (1-6)</label>
+                                    <input type="number" id="positionConsPosition" min="1" max="6" placeholder="1-6">
+                                </div>
+                                <div class="position-cons-input-group">
+                                    <label for="positionConsLetters">Letters</label>
+                                    <input type="text" id="positionConsLetters" placeholder="Enter letters...">
+                                </div>
+                                <div class="position-cons-input-group">
+                                    <label for="positionConsCount">Letter count (total)</label>
+                                    <input type="number" id="positionConsCount" min="0" placeholder="0+">
+                                </div>
+                            </div>
+                            <div class="position-cons-right">
+                                <button id="positionConsGenerate" class="secondary-btn">Random Letters</button>
+                                <button id="positionConsSubmit" class="primary-btn">FILTER</button>
+                            </div>
+                        </div>
+                        <div id="positionConsMessage" class="position-cons-message"></div>
+                    </div>
+                </div>
+
+                <!-- PIANO FORTE feature -->
+                <div id="pianoForteFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">PIANO FORTE</h2>
+                    <div class="piano-forte-row" style="display: flex; justify-content: center; gap: 10px;">
+                        <button class="piano-forte-btn" data-letter="A">A</button>
+                        <button class="piano-forte-btn" data-letter="B">B</button>
+                        <button class="piano-forte-btn" data-letter="C">C</button>
+                        <button class="piano-forte-btn" data-letter="D">D</button>
+                        <button class="piano-forte-btn" data-letter="E">E</button>
+                        <button class="piano-forte-btn" data-letter="F">F</button>
+                        <button class="piano-forte-btn" data-letter="G">G</button>
+                    </div>
+                    <div id="pianoForteStringDisplay" style="display: flex; justify-content: center; align-items: center; min-height: 50px; margin-top: 20px; padding: 10px; font-size: 24px; font-weight: bold; color: #1B5E20; letter-spacing: 8px;">
+                        <span id="pianoForteString">-</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="pianoForteSubmitButton">SUBMIT</button>
+                        <button id="pianoForteNoneButton" class="none-button">NONE</button>
+                        <button id="pianoForteSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- PIANO PIANO feature -->
+                <div id="pianoPianoFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">PIANO PIANO</h2>
+                    <div class="piano-piano-row" style="display: flex; justify-content: center; gap: 10px;">
+                        <button class="piano-piano-btn" data-count="1">1</button>
+                        <button class="piano-piano-btn" data-count="2">2</button>
+                        <button class="piano-piano-btn" data-count="3">3</button>
+                        <button class="piano-piano-btn" data-count="4">4</button>
+                        <button class="piano-piano-btn" data-count="5">5</button>
+                        <button class="piano-piano-btn" data-count="6">6</button>
+                        <button class="piano-piano-btn" data-count="7">7</button>
+                    </div>
+                    <div id="pianoPianoDisplay" style="display: flex; justify-content: center; align-items: center; min-height: 50px; margin-top: 20px; padding: 10px; font-size: 24px; font-weight: bold; color: #1B5E20;">
+                        <span id="pianoPianoString">-</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="pianoPianoSubmitButton">SUBMIT</button>
+                        <button id="pianoPianoNoneButton" class="none-button">NONE</button>
+                        <button id="pianoPianoSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- T9 LENGTH feature -->
+                <div id="t9LengthFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">LENGTH</h2>
+                    <div class="length-input">
+                        <input type="text" id="t9LengthInput" placeholder="Enter length (3+)" inputmode="numeric" pattern="[0-9]*" autocomplete="off" min="3">
+                        <button id="t9LengthButton">SUBMIT</button>
+                        <button id="t9LengthSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- T9 LAST TWO feature -->
+                <div id="t9LastTwoFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">LAST TWO</h2>
+                    <div class="t9-last-two-row" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <button class="t9-last-two-btn" data-digit="2">2</button>
+                        <button class="t9-last-two-btn" data-digit="3">3</button>
+                        <button class="t9-last-two-btn" data-digit="4">4</button>
+                        <button class="t9-last-two-btn" data-digit="5">5</button>
+                        <button class="t9-last-two-btn" data-digit="6">6</button>
+                        <button class="t9-last-two-btn" data-digit="7">7</button>
+                        <button class="t9-last-two-btn" data-digit="8">8</button>
+                        <button class="t9-last-two-btn" data-digit="9">9</button>
+                    </div>
+                    <div id="t9LastTwoDisplay" style="display: flex; justify-content: center; align-items: center; min-height: 50px; margin-top: 20px; padding: 10px; font-size: 24px; font-weight: bold; color: #1B5E20;">
+                        <span id="t9LastTwoString">-</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="t9LastTwoSubmitButton">SUBMIT</button>
+                        <button id="t9LastTwoResetButton" class="reset-button">RESET</button>
+                        <button id="t9LastTwoSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- T9 1 LIE (L4) feature -->
+                <div id="t9OneLieFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">1 LIE (L4)</h2>
+                    <div class="t9-one-lie-row" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <button class="t9-one-lie-btn" data-digit="2">2</button>
+                        <button class="t9-one-lie-btn" data-digit="3">3</button>
+                        <button class="t9-one-lie-btn" data-digit="4">4</button>
+                        <button class="t9-one-lie-btn" data-digit="5">5</button>
+                        <button class="t9-one-lie-btn" data-digit="6">6</button>
+                        <button class="t9-one-lie-btn" data-digit="7">7</button>
+                        <button class="t9-one-lie-btn" data-digit="8">8</button>
+                        <button class="t9-one-lie-btn" data-digit="9">9</button>
+                        <button class="t9-one-lie-btn blank-btn" data-digit="BLANK" style="background-color: #f44336; color: white; font-weight: bold;">B</button>
+                    </div>
+                    <div id="t9OneLieDisplay" style="display: flex; justify-content: center; align-items: center; min-height: 50px; margin-top: 20px; padding: 10px; font-size: 24px; font-weight: bold; color: #1B5E20;">
+                        <span id="t9OneLieString">-</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="t9OneLieSubmitButton">SUBMIT</button>
+                        <button id="t9OneLieResetButton" class="reset-button">RESET</button>
+                        <button id="t9OneLieSkipButton" class="skip-button">SKIP</button>
+                        <div id="t9OneLiePossibleDigits" style="margin-top: 15px; padding: 10px; font-size: 14px; color: #666; text-align: center; min-height: 20px;">
+                            <span style="font-weight: bold;">Possible T9 digits for BLANK:</span> <span id="t9OneLiePossibleDigitsList">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- T9 REPEAT feature -->
+                <div id="t9RepeatFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">Repeat?</h2>
+                    <p style="text-align: center; margin: 20px 0; font-size: 18px; font-weight: bold;">Repeated Digits?</p>
+                    <div class="button-container">
+                        <button id="t9RepeatYesBtn" class="yes-btn">YES</button>
+                        <button id="t9RepeatNoBtn" class="no-btn">NO</button>
+                        <button id="t9RepeatSkipBtn" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- T9 HIGHER feature -->
+                <div id="t9HigherFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">Higher?</h2>
+                    <p style="text-align: center; margin: 20px 0; font-size: 18px; font-weight: bold;">Second digit higher than first?</p>
+                    <div class="button-container">
+                        <button id="t9HigherYesBtn" class="yes-btn">YES</button>
+                        <button id="t9HigherNoBtn" class="no-btn">NO</button>
+                        <button id="t9HigherSameBtn" class="yes-btn" style="background-color: #ff9800;">SAME</button>
+                        <button id="t9HigherSkipBtn" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- T9 1 TRUTH (F4) feature -->
+                <div id="t9OneTruthFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">1 TRUTH (F4)</h2>
+                    <div class="t9-one-truth-row" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <button class="t9-one-truth-btn" data-digit="2">2</button>
+                        <button class="t9-one-truth-btn" data-digit="3">3</button>
+                        <button class="t9-one-truth-btn" data-digit="4">4</button>
+                        <button class="t9-one-truth-btn" data-digit="5">5</button>
+                        <button class="t9-one-truth-btn" data-digit="6">6</button>
+                        <button class="t9-one-truth-btn" data-digit="7">7</button>
+                        <button class="t9-one-truth-btn" data-digit="8">8</button>
+                        <button class="t9-one-truth-btn" data-digit="9">9</button>
+                        <button class="t9-one-truth-btn blank-btn" data-digit="BLANK" style="background-color: #f44336; color: white; font-weight: bold;">B</button>
+                    </div>
+                    <div id="t9OneTruthDisplay" style="display: flex; justify-content: center; align-items: center; min-height: 50px; margin-top: 20px; padding: 10px; font-size: 24px; font-weight: bold; color: #1B5E20;">
+                        <span id="t9OneTruthString">-</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="t9OneTruthSubmitButton">SUBMIT</button>
+                        <button id="t9OneTruthResetButton" class="reset-button">RESET</button>
+                        <button id="t9OneTruthSkipButton" class="skip-button">SKIP</button>
+                        <div id="t9OneTruthPossibleDigits" style="margin-top: 15px; padding: 10px; font-size: 14px; color: #666; text-align: center; min-height: 20px;">
+                            <span style="font-weight: bold;">Possible T9 digits for BLANK:</span> <span id="t9OneTruthPossibleDigitsList">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- T9 B feature -->
+                <div id="t9BFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">B-IDENTITY</h2>
+                    <p style="text-align: center; margin: 20px 0; font-size: 16px; color: #666;">
+                        Select the T9 digit for the BLANK position from 1 LIE (L4)
+                    </p>
+                    <div class="t9-b-row" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                        <!-- Buttons will be dynamically generated -->
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="t9BSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- AlphaNumeric feature -->
+                <div id="alphaNumericFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">AlphaNumeric</h2>
+                    <div class="button-container">
+                        <button id="alphaNumericYesBtn" class="yes-btn">YES</button>
+                        <button id="alphaNumericNoBtn" class="no-btn">NO</button>
+                        <button id="alphaNumericSkipBtn" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Letters Above feature -->
+                <div id="lettersAboveFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">Letters Above</h2>
+                    <div class="length-input">
+                        <input type="text" id="lettersAboveInput" placeholder="Enter number (0-26)" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                        <button id="lettersAboveButton">SUBMIT</button>
+                        <button id="lettersAboveSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Dictionary (Alpha) feature -->
+                <div id="dictionaryAlphaFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">Dictionary (Alpha)</h2>
+                    <div class="section-buttons">
+                        <button class="section-btn" data-section="begin">Beginning</button>
+                        <button class="section-btn" data-section="mid">Middle</button>
+                        <button class="section-btn" data-section="end">End</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="dictionaryAlphaSubmitButton">SUBMIT</button>
+                        <button id="dictionaryAlphaSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+
+                <!-- S/M/L (Length) feature -->
+                <div id="smlLengthFeature" class="feature-section" style="display: none;">
+                    <h2 class="feature-title">S/M/L (Length)</h2>
+                    <div class="section-buttons">
+                        <button class="section-btn" data-section="small">Small</button>
+                        <button class="section-btn" data-section="medium">Medium</button>
+                        <button class="section-btn" data-section="long">Long</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; gap: 10px;">
+                        <button id="smlLengthSubmitButton">SUBMIT</button>
+                        <button id="smlLengthSkipButton" class="skip-button">SKIP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2>Settings</h2>
+                <div class="settings-options">
+                    <label>
+                        <input type="checkbox" id="enableColour3" checked>
+                        Enable COLOUR3 Feature
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enableVowel" checked>
+                        Enable VOWEL Feature
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enableShape" checked>
+                        Enable SHAPE Feature
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Info Modals -->
+    <div id="featureInfoModals">
+        <div id="position1Info" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Short Word</h3>
+                <p><strong>Short Word</strong><br>Input a short word that includes 2 of the spectators chosen consonants.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="consMidInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>3 LETTER WORD</h3>
+                <p><strong>3 LETTER WORD</strong><br>Input a 3 letter word. All letters taken into consideration.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="consMid2Info" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Cons MID</h3>
+                <p><strong>Cons MID</strong><br>Input a 3 letter word that includes 2 of the spectators chosen consonants (checked against all except first and last letter).</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="vowelInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>VOWEL</h3>
+                <p><strong>Vowel</strong><br>This MUST follow Short Word. Will cycle through vowels within Short Word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="vowel2Info" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>VOWEL2</h3>
+                <p><strong>Vowel2</strong><br>This MUST follow Short Word. Will cycle through vowels within Short Word. Select START, MIDDLE, or END to specify which section of the word contains the vowel.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="vowelPosInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>VOWEL POS</h3>
+                <p><strong>Vowel Position</strong><br>This MUST follow Short Word, 3 LETTER WORD, or CONS MID. Will cycle through vowels within Short Word. Select BEGIN, MID, or END to specify which section of the word MUST contain the vowel.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="nameInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>NAME</h3>
+                <p><strong>NAME</strong><br>Enter a full name (first and surname). The feature extracts the initials and uses them like Short Word to filter words containing those consonants. Then select a vowel and position (START/MID/END) to further filter words containing that vowel in the specified position.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="oInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>O?</h3>
+                <p><strong>O?</strong><br>Filters whether or not there is an "O" in the chosen word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="lexiconInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Curved Pos.</h3>
+                <p><strong>Curved Positions</strong><br>In which positions are there curved letters (as caps)- example. 135</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="eeeInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>EEE?</h3>
+                <p><strong>E?</strong><br>Input an "E", an "E" sound, or no E in the second position of the chosen word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="eeeFirstInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>EEEFIRST</h3>
+                <p><strong>E?</strong><br>Input an "E", an "E" sound, or no E in the first position of the chosen word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="originalLexInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Lexicon</h3>
+                <p><strong>Lexicon</strong><br>Note the lexicon position and possible letters. Enter a word beginning with the letter in that position within the chosen word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="consonantInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Cons. Together</h3>
+                <p><strong>Consonants Together?</strong><br>Are there two consonants together within the chosen word?</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="colour3Info" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>COLOUR3</h3>
+                <p><strong>Colour in 3rd position.</strong><br>Can the spectator think of a colour beginning with the letter in the 3rd position? Yes/No.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="lengthInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>LENGTH</h3>
+                <p><strong>Word Length</strong><br>Type in a number referring to the length of the word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="mostFrequentInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>MOST FREQUENT</h3>
+                <p><strong>Most Frequent Letter</strong><br>The most frequent letter in the combined wordlist. (Can be used more than once)</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="leastFrequentInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>LEAST FREQUENT</h3>
+                <p><strong>Least Frequent Letter</strong><br>The least frequent letter in the combined wordlist. (Can be used more than once)</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="notInInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>NOT IN</h3>
+                <p><strong>Letters Not In Word</strong><br>Type in a string of letters. If all these letters are in the word, it will be removed from the wordlist.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="abcdeInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>ABCDE</h3>
+                <p>Are there the letters A-E within the word? Answer YES for individual letters, then DONE to confirm.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="abcInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>ABC</h3>
+                <p>Are there the letters A-C within the word? Answer YES for individual letters, then DONE to confirm.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="findEeeInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>FIND-EEE</h3>
+                <p>Select a letter that is definitely present in the target word. Words will be filtered to only include those containing the selected letter. Only one letter can be selected at a time.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="positionConsInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>POSITION-CONS</h3>
+                <p><strong>POSITION-CONS</strong><br>Filters words by a specific position (leave blank to check all positions) that must contain one of the letters from a provided string. Enter the total number of letters from that string (including the position letter) that appear in the target word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="firstCurvedInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>FIRST CURVED</h3>
+                <p><strong>FIRST CURVED</strong><br>Filters words where the first curved letter appears at a specific position. All letters before that position must be straight letters, and the letter at the specified position must be curved.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="pinInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>PIN</h3>
+                <p><strong>PIN</strong><br>Enter up to 6 words and a corresponding code. Each digit in the code represents how many letters from the corresponding word appear in the target word. The feature filters words that match all code requirements.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="pianoForteInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>PIANO FORTE</h3>
+                <p><strong>Piano Forte</strong><br>Select letters A-G that MUST be in the word. Selected letters must be present, and unselected letters must NOT be present. Click SUBMIT to filter, or NONE if none of the letters A-G are in the word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="pianoPianoInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>PIANO PIANO</h3>
+                <p><strong>Piano Piano</strong><br>Select a number (1-7) representing the total count of letters A-G in the word. The word must contain exactly that many A-G letters in any combination.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9LengthInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>LENGTH</h3>
+                <p><strong>T9 Length</strong><br>Type in a number referring to the length of the T9 number string for the word. The word's T9 representation must match this length exactly.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9LastTwoInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>LAST TWO</h3>
+                <p><strong>T9 Last Two</strong><br>Select 2 digits (2-9) to check if the T9 string ends with those digits. Only words whose T9 representation ends with the selected digits will be kept.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9OneLieInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>1 LIE (L4)</h3>
+                <p><strong>T9 1 Lie (L4)</strong><br>Select 4 digits (2-9) representing the last 4 digits of the T9 string. The filter assumes exactly ONE of these digits is incorrect. Words will be kept if their T9 string's last 4 digits match any scenario where 3 digits are correct and 1 digit is different.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9RepeatInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Repeat?</h3>
+                <p><strong>T9 Repeated Digits</strong><br>Filters words based on whether their T9 string contains two consecutive repeated digits. Select YES if the T9 string has repeated digits next to each other, or NO if it does not.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9HigherInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Higher?</h3>
+                <p><strong>T9 Second Digit Comparison</strong><br>Filters words based on the relationship between the first two digits of the T9 string. Select YES if the second digit is higher than the first, NO if it's lower, or SAME if both digits are equal.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9OneTruthInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>1 TRUTH (F4)</h3>
+                <p><strong>T9 1 Truth (F4)</strong><br>Select 4 digits (2-9) representing the first 4 digits of the T9 string. The filter assumes exactly ONE of these digits is correct. Words will be kept if their T9 string's first 4 digits match any scenario where 1 digit is correct and 3 digits are different.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9BInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>B-IDENTITY</h3>
+                <p><strong>T9 B-IDENTITY</strong><br>This MUST follow 1 LIE (L4) with a BLANK. Select the correct T9 digit for the BLANK position from the possible options calculated in 1 LIE (L4). The wordlist will be filtered to only include words where the BLANK position matches the selected digit.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="alphaNumericInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>AlphaNumeric</h3>
+                <p><strong>AlphaNumeric Rule</strong><br>YES: Keeps words where the word length matches a letter's position in the alphabet AND that letter is in the word (e.g., 1-letter words with A, 2-letter words with B, etc.). NO: Removes words that follow the rule, keeping all others.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="lettersAboveInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Letters Above</h3>
+                <p><strong>Letters Above</strong><br>Enter a number (0-26) representing how many letters before a secret chosen letter must be in the word. Words are kept if there exists at least one letter in the word such that exactly that many letters before it (in the alphabet) are also present in the word.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="dictionaryAlphaInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Dictionary (Alpha)</h3>
+                <p><strong>First Letter Location</strong><br>Filters words based on the first letter's position in the alphabet. Beginning: A-M, Middle: I-T, End: N-Z. Select a section and click SUBMIT.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="smlLengthInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>S/M/L (Length)</h3>
+                <p><strong>Word Length Categories</strong><br>Filters words by length: Small (1-6 characters), Medium (5-9 characters), Long (7+ characters). Select a category and click SUBMIT.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="t9ModeInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>T9</h3>
+                <p><strong>T9 Features Category</strong><br>Click this button to view and access T9-based filtering features. T9 features filter words based on their phone keypad number representation (A-Z mapped to 2-9).</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+        <div id="alphanumericModeInfo" class="feature-info-modal">
+            <div class="feature-info-content">
+                <h3>Alpha-Numeric</h3>
+                <p><strong>Alpha-Numeric Features Category</strong><br>Click this button to view and access Alpha-Numeric filtering features. These features filter words based on relationships between letters and their positions in the alphabet.</p>
+                <button class="close-info-button">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=11"></script>
+    <script>
+        // Prevent double-tap zoom
+        document.addEventListener('touchend', function(e) {
+            if (!e.target.matches('input[type="text"]')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent double-tap zoom on specific elements
+        document.querySelectorAll('button, .results-container').forEach(element => {
+            element.addEventListener('touchend', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+        });
+
+        // Hide address bar on mobile
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                window.scrollTo(0, 1);
+            }, 0);
+        });
+
+        // Prevent bounce effect on iOS
+        document.body.addEventListener('touchmove', function(e) {
+            // Allow touchmove on inputs and their containers, and scrollable containers
+            if (e.target.closest('.results-container') !== null || 
+                e.target.closest('input') !== null ||
+                e.target.closest('.position-cons-input-group') !== null ||
+                e.target.closest('.position-cons-form') !== null ||
+                e.target.closest('#availableFeatures') !== null ||
+                e.target.closest('.available-features') !== null) {
+                return;
+            }
+            e.preventDefault();
+        }, { passive: false });
+
+        // Add touch event listeners to all buttons
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.style.opacity = '0.8';
+            }, { passive: false });
+
+            button.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.style.opacity = '1';
+                this.click(); // Trigger the click event
+            }, { passive: false });
+
+            button.addEventListener('touchcancel', function(e) {
+                e.preventDefault();
+                this.style.opacity = '1';
+            }, { passive: false });
+        });
+
+        // Improve text input handling on mobile
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            // Prevent zoom on focus
+            input.addEventListener('focus', function() {
+                this.style.fontSize = '16px';
+                // Scroll the input into view
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+
+            // Handle input events
+            input.addEventListener('input', function() {
+                // Ensure proper value handling
+                this.value = this.value.trim();
+            });
+
+            // Handle blur events
+            input.addEventListener('blur', function() {
+                // Clean up the value when input loses focus
+                this.value = this.value.trim();
+            });
+
+            // Prevent unwanted behaviors
+            input.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+            }, { passive: false });
+
+            input.addEventListener('touchend', function(e) {
+                e.stopPropagation();
+            }, { passive: false });
+
+            // Ensure keyboard shows up
+            input.addEventListener('click', function() {
+                this.focus();
+            });
+        });
+
+        // Settings Modal Functions
+        function showSettings() {
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function hideSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // Close settings when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('settingsModal');
+            if (event.target === modal) {
+                hideSettings();
+            }
+        }
+
+        // Settings button click handler
+        document.getElementById('settingsButton').addEventListener('click', showSettings);
+
+        // Test if pako is loaded
+        window.addEventListener('load', function() {
+            if (typeof pako !== 'undefined') {
+                console.log('✅ Pako library loaded successfully');
+            } else {
+                console.log('❌ Pako library failed to load');
+            }
+        });
+    </script>
+    <div id="versionDisplay" class="version-display"></div>
+</body>
+</html> 
