@@ -27,7 +27,7 @@ let usedLettersInWorkflow = [];  // Track letters used in current workflow
 let letterFrequencyMap = new Map();  // Store frequency of all letters
 
 // Version constant - increment .1 for each push update, major version when specified
-const APP_VERSION = '12.1';
+const APP_VERSION = '12.2';
 
 // Store T9 1 LIE (L4) data for "B" feature
 let t9OneLieBlankIndex = null;  // Position of BLANK (0-3)
