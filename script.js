@@ -8372,10 +8372,15 @@ function updatePinPossibleDigits(mode) {
             button.classList.add('selected');
         }
         button.textContent = digit;
-        button.addEventListener('click', () => {
+        const selectDigit = () => {
             pinState.selectedDigit = pinState.selectedDigit === digit ? null : digit;
             updatePinResults();
-        });
+        };
+        button.addEventListener('click', selectDigit);
+        button.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            selectDigit();
+        }, { passive: false });
         container.appendChild(button);
     });
 }
