@@ -8418,11 +8418,13 @@ function updatePinResults() {
     }
 
     const selectedDigits = pinState.inputDigits.slice(0, 4);
+    const blankIndex = selectedDigits.indexOf('BLANK');
     const matches = filterWordsByT9OneLie(filteredWords, selectedDigits);
-    const possibleDigits = calculatePossibleT9DigitsForBlank(filteredWords, selectedDigits);
+    const possibleDigits = calculatePossibleT9DigitsForBlank(filteredWords, selectedDigits)
+        .map(digit => String(digit));
     pinState.possibleDigits = possibleDigits;
 
-    if (!possibleDigits.includes(pinState.selectedDigit)) {
+    if (pinState.selectedDigit !== null && !possibleDigits.includes(String(pinState.selectedDigit))) {
         pinState.selectedDigit = null;
     }
 
@@ -8430,7 +8432,14 @@ function updatePinResults() {
 
     let finalWords = matches;
     if (pinState.selectedDigit) {
-        finalWords = filterWordsByPinBIdentity(filteredWords, selectedDigits, pinState.selectedDigit);
+        const selected = String(pinState.selectedDigit);
+        calculateT9Strings(matches);
+        finalWords = matches.filter(word => {
+            const t9String = t9StringsMap.get(word) || wordToT9(word);
+            if (t9String.length < 4) return false;
+            const lastFour = t9String.slice(-4);
+            return lastFour[blankIndex] === selected;
+        });
     }
 
     renderPinResults(finalWords);
