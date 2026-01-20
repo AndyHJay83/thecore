@@ -27,12 +27,21 @@ let usedLettersInWorkflow = [];  // Track letters used in current workflow
 let letterFrequencyMap = new Map();  // Store frequency of all letters
 
 // Version constant - increment .1 for each push update, major version when specified
-const APP_VERSION = '12.0';
+const APP_VERSION = '12.1';
 
 // Store T9 1 LIE (L4) data for "B" feature
 let t9OneLieBlankIndex = null;  // Position of BLANK (0-3)
 let t9OneLiePossibleDigits = []; // Array of possible digits for BLANK
 let t9OneLieSelectedDigits = []; // The full 4-digit selection from 1 LIE
+
+// PIN performance state
+let pinModeActive = false;
+const pinState = {
+    inputDigits: [],
+    lengthValue: '',
+    selectedDigit: null,
+    possibleDigits: []
+};
 
 // POSITION-CONS Constants
 const ALPHABET_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -151,6 +160,8 @@ const workflowName = document.getElementById('workflowName');
 const selectedFeaturesList = document.getElementById('selectedFeaturesList');
 const workflowSelect = document.getElementById('workflowSelect');
 const performButton = document.getElementById('performButton');
+const pinModeButton = document.getElementById('pinModeButton');
+const pinBackButton = document.getElementById('pinBackButton');
 
 // Initialize the app when the DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
@@ -313,6 +324,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Ensure export button is available immediately
     initializeExportButton();
 
+    // Initialize PIN performance handlers
+    initializePinPerformance();
+
     // Add wordlist change listener - reset loaded flag when wordlist changes
     const wordlistSelect = document.getElementById('wordlistSelect');
     wordlistSelect.addEventListener('change', () => {
@@ -321,6 +335,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         wordList = [];
         currentFilteredWords = [];
         updateExportButtonState(currentFilteredWords);
+        t9StringsMap.clear();
+        t9StringsCalculated = false;
+        t9OneLieBlankIndex = null;
+        t9OneLiePossibleDigits = [];
+        t9OneLieSelectedDigits = [];
     });
 
     const availableFeatures = document.getElementById('availableFeatures');
@@ -602,6 +621,11 @@ function setupButtonListeners() {
                 }
                 document.getElementById('homepage').style.display = 'none';
                 document.getElementById('workflowCreation').style.display = 'none';
+                const pinPerformance = document.getElementById('pinPerformance');
+                if (pinPerformance) {
+                    pinPerformance.style.display = 'none';
+                }
+                pinModeActive = false;
                 const workflowExecution = document.getElementById('workflowExecution');
                 workflowExecution.style.display = 'block';
                 await executeWorkflow(workflow.steps);
@@ -8159,10 +8183,338 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeInfoButtons();
 });
 
+// --- PIN Performance Logic ---
+function initializePinPerformance() {
+    const pinModeButton = document.getElementById('pinModeButton');
+    if (pinModeButton) {
+        pinModeButton.replaceWith(pinModeButton.cloneNode(true));
+        const newPinModeButton = document.getElementById('pinModeButton');
+        newPinModeButton.addEventListener('click', showPinPerformance);
+        newPinModeButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            newPinModeButton.click();
+        }, { passive: false });
+    }
+
+    const pinBackButton = document.getElementById('pinBackButton');
+    if (pinBackButton) {
+        pinBackButton.replaceWith(pinBackButton.cloneNode(true));
+        const newPinBackButton = document.getElementById('pinBackButton');
+        newPinBackButton.addEventListener('click', hidePinPerformance);
+        newPinBackButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            hidePinPerformance();
+        }, { passive: false });
+    }
+
+    const pinLengthInput = document.getElementById('pinLengthInput');
+    if (pinLengthInput) {
+        pinLengthInput.addEventListener('input', handlePinLengthInput);
+        pinLengthInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handlePinLengthInput();
+            }
+        });
+    }
+
+    const pinKeys = document.querySelectorAll('.pin-key');
+    pinKeys.forEach(btn => {
+        const clonedButton = btn.cloneNode(true);
+        btn.replaceWith(clonedButton);
+        const digit = clonedButton.dataset.digit;
+        const action = clonedButton.dataset.action;
+        const handler = () => {
+            if (action === 'backspace') {
+                handlePinBackspace();
+                return;
+            }
+            if (digit) {
+                handlePinDigitInput(digit);
+            }
+        };
+
+        clonedButton.addEventListener('click', handler);
+        clonedButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handler();
+        }, { passive: false });
+    });
+
+    resetPinState();
+}
+
+async function showPinPerformance() {
+    document.getElementById('homepage').style.display = 'none';
+    document.getElementById('workflowCreation').style.display = 'none';
+    document.getElementById('workflowExecution').style.display = 'none';
+    const pinPerformance = document.getElementById('pinPerformance');
+    if (pinPerformance) {
+        pinPerformance.style.display = 'flex';
+    }
+    pinModeActive = true;
+    resetPinState();
+    try {
+        await ensurePinWordListLoaded();
+        updatePinResults();
+    } catch (error) {
+        console.error('Error loading wordlist for PIN:', error);
+        renderPinResultsMessage('Error loading wordlist.');
+    }
+}
+
+function hidePinPerformance() {
+    const pinPerformance = document.getElementById('pinPerformance');
+    if (pinPerformance) {
+        pinPerformance.style.display = 'none';
+    }
+    document.getElementById('workflowCreation').style.display = 'none';
+    document.getElementById('workflowExecution').style.display = 'none';
+    document.getElementById('homepage').style.display = 'block';
+    pinModeActive = false;
+    resetPinState();
+}
+
+async function ensurePinWordListLoaded() {
+    const wordlistSelect = document.getElementById('wordlistSelect');
+    const selectedWordlist = wordlistSelect ? wordlistSelect.value : '';
+    const needsReload = !wordListLoaded ||
+        wordList.length === 0 ||
+        lastLoadedWordlist !== selectedWordlist;
+
+    if (needsReload) {
+        await loadWordList();
+        wordListLoaded = true;
+        lastLoadedWordlist = selectedWordlist;
+        t9StringsMap.clear();
+        t9StringsCalculated = false;
+    }
+}
+
+function resetPinState() {
+    pinState.inputDigits = [];
+    pinState.lengthValue = '';
+    pinState.selectedDigit = null;
+    pinState.possibleDigits = [];
+
+    const pinLengthInput = document.getElementById('pinLengthInput');
+    if (pinLengthInput) {
+        pinLengthInput.value = '';
+    }
+
+    updatePinDisplay();
+    updatePinPossibleDigits('empty');
+    renderPinResultsMessage('Enter 4 digits with one B.');
+}
+
+function handlePinLengthInput() {
+    const pinLengthInput = document.getElementById('pinLengthInput');
+    if (!pinLengthInput) return;
+    const cleaned = pinLengthInput.value.replace(/[^0-9]/g, '');
+    if (pinLengthInput.value !== cleaned) {
+        pinLengthInput.value = cleaned;
+    }
+    pinState.lengthValue = cleaned;
+    updatePinResults();
+}
+
+function handlePinDigitInput(digit) {
+    if (pinState.inputDigits.length >= 4) return;
+    if (digit === 'BLANK' && pinState.inputDigits.includes('BLANK')) return;
+
+    pinState.inputDigits.push(digit);
+    updatePinDisplay();
+    updatePinResults();
+}
+
+function handlePinBackspace() {
+    if (pinState.inputDigits.length === 0) return;
+    pinState.inputDigits.pop();
+    updatePinDisplay();
+    updatePinResults();
+}
+
+function updatePinDisplay() {
+    const cells = document.querySelectorAll('#pinInputDisplay .pin-input-cell');
+    cells.forEach((cell, index) => {
+        const value = pinState.inputDigits[index];
+        if (value) {
+            cell.textContent = value === 'BLANK' ? 'B' : value;
+            cell.classList.add('filled');
+            cell.classList.toggle('blank', value === 'BLANK');
+        } else {
+            cell.textContent = '';
+            cell.classList.remove('filled');
+            cell.classList.remove('blank');
+        }
+    });
+}
+
+function updatePinPossibleDigits(mode) {
+    const container = document.getElementById('pinPossibleDigits');
+    if (!container) return;
+
+    if (mode === 'empty') {
+        container.textContent = '-';
+        return;
+    }
+
+    container.innerHTML = '';
+    if (pinState.possibleDigits.length === 0) {
+        container.textContent = 'None';
+        return;
+    }
+
+    pinState.possibleDigits.forEach(digit => {
+        const button = document.createElement('button');
+        button.className = 'pin-possible-btn';
+        if (digit === pinState.selectedDigit) {
+            button.classList.add('selected');
+        }
+        button.textContent = digit;
+        button.addEventListener('click', () => {
+            pinState.selectedDigit = pinState.selectedDigit === digit ? null : digit;
+            updatePinResults();
+        });
+        container.appendChild(button);
+    });
+}
+
+function updatePinResults() {
+    if (!pinModeActive) return;
+
+    if (!wordList || wordList.length === 0) {
+        updatePinPossibleDigits('empty');
+        renderPinResultsMessage('Wordlist not loaded yet.');
+        return;
+    }
+
+    let filteredWords = [...wordList];
+    const lengthValue = parseInt(pinState.lengthValue, 10);
+    if (!Number.isNaN(lengthValue) && lengthValue > 0) {
+        filteredWords = filterWordsByLength(filteredWords, lengthValue);
+    }
+
+    if (pinState.inputDigits.length !== 4) {
+        pinState.selectedDigit = null;
+        pinState.possibleDigits = [];
+        updatePinPossibleDigits('empty');
+        renderPinResultsMessage('Enter 4 digits with one B.');
+        return;
+    }
+
+    const blankCount = pinState.inputDigits.filter(value => value === 'BLANK').length;
+    if (blankCount !== 1) {
+        pinState.selectedDigit = null;
+        pinState.possibleDigits = [];
+        updatePinPossibleDigits('empty');
+        renderPinResultsMessage('Use exactly one B.');
+        return;
+    }
+
+    const selectedDigits = pinState.inputDigits.slice(0, 4);
+    const matches = filterWordsByT9OneLie(filteredWords, selectedDigits);
+    const possibleDigits = calculatePossibleT9DigitsForBlank(filteredWords, selectedDigits);
+    pinState.possibleDigits = possibleDigits;
+
+    if (!possibleDigits.includes(pinState.selectedDigit)) {
+        pinState.selectedDigit = null;
+    }
+
+    updatePinPossibleDigits();
+
+    let finalWords = matches;
+    if (pinState.selectedDigit) {
+        finalWords = filterWordsByPinBIdentity(filteredWords, selectedDigits, pinState.selectedDigit);
+    }
+
+    renderPinResults(finalWords);
+}
+
+function filterWordsByPinBIdentity(words, selectedDigits, selectedDigit) {
+    const blankIndex = selectedDigits.indexOf('BLANK');
+    if (blankIndex === -1) return words;
+
+    calculateT9Strings(words);
+    return words.filter(word => {
+        const t9String = t9StringsMap.get(word) || wordToT9(word);
+        if (t9String.length < 4) return false;
+
+        const lastFourDigits = t9String.slice(-4).split('');
+        for (let i = 0; i < 4; i++) {
+            if (i !== blankIndex && selectedDigits[i] !== 'BLANK') {
+                if (lastFourDigits[i] !== selectedDigits[i]) {
+                    return false;
+                }
+            }
+        }
+        return lastFourDigits[blankIndex] === selectedDigit;
+    });
+}
+
+function renderPinResultsMessage(message) {
+    const resultsContainer = document.getElementById('pinResults');
+    const countDisplay = document.getElementById('pinResultsCount');
+    if (!resultsContainer || !countDisplay) return;
+
+    resultsContainer.innerHTML = `<div class="pin-results-empty">${message}</div>`;
+    countDisplay.textContent = '0';
+}
+
+function renderPinResults(words) {
+    const resultsContainer = document.getElementById('pinResults');
+    const countDisplay = document.getElementById('pinResultsCount');
+    if (!resultsContainer || !countDisplay) return;
+
+    countDisplay.textContent = words.length.toString();
+    if (words.length === 0) {
+        resultsContainer.innerHTML = '<div class="pin-results-empty">No matches found.</div>';
+        return;
+    }
+
+    calculateT9Strings(words);
+    const renderItems = (items) => items.map(word => {
+        const t9String = t9StringsMap.get(word) || wordToT9(word);
+        const firstFour = t9String.substring(0, 4);
+        const rest = t9String.substring(4);
+        return `
+            <div class="pin-result-item">
+                <div class="pin-word">${word}</div>
+                <div class="pin-t9"><span class="pin-t9-prefix">${firstFour}</span>${rest}</div>
+            </div>
+        `;
+    }).join('');
+
+    if (words.length > 1000) {
+        const initialWords = words.slice(0, 1000);
+        const remainingCount = words.length - 1000;
+        resultsContainer.innerHTML = `
+            ${renderItems(initialWords)}
+            <div class="pin-load-more">
+                <button id="pinLoadMoreButton">Show ${remainingCount.toLocaleString()} more</button>
+            </div>
+        `;
+        const loadMoreButton = document.getElementById('pinLoadMoreButton');
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', () => {
+                resultsContainer.innerHTML = renderItems(words);
+            });
+        }
+        return;
+    }
+
+    resultsContainer.innerHTML = renderItems(words);
+}
+
 // Also initialize info buttons when the workflow creation page is shown
 function showWorkflowCreation() {
     document.getElementById('homepage').style.display = 'none';
     document.getElementById('workflowExecution').style.display = 'none';
+    const pinPerformance = document.getElementById('pinPerformance');
+    if (pinPerformance) {
+        pinPerformance.style.display = 'none';
+    }
+    pinModeActive = false;
     document.getElementById('workflowCreation').style.display = 'block';
     
     // Hide saved workflows initially
@@ -8180,6 +8532,11 @@ function hideWorkflowCreation() {
     document.getElementById('homepage').style.display = 'block';
     document.getElementById('workflowCreation').style.display = 'none';
     document.getElementById('workflowExecution').style.display = 'none';
+    const pinPerformance = document.getElementById('pinPerformance');
+    if (pinPerformance) {
+        pinPerformance.style.display = 'none';
+    }
+    pinModeActive = false;
 }
 
 // Hide native select elements to prevent overlap with custom dropdowns (aggressive)
