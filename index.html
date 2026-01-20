@@ -17,7 +17,7 @@
     <meta http-equiv="Expires" content="0">
     <title>The Core</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="styles.css?v=11">
+    <link rel="stylesheet" href="styles.css?v=12.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 </head>
@@ -70,6 +70,7 @@
             </div>
             
             <button id="performButton" class="perform-button">PERFORM</button>
+            <button id="pinModeButton" class="perform-button pin-button">PIN</button>
             <button id="createWorkflowButton" class="create-button">New Workflow</button>
         </div>
 
@@ -795,6 +796,59 @@
             </div>
         </div>
 
+        <!-- PIN Performance Area -->
+        <div id="pinPerformance" class="pin-performance" style="display: none;">
+            <button id="pinBackButton" class="back-button">BACK</button>
+            <div class="pin-content">
+                <h2 class="pin-title">T9 PIN</h2>
+                <div class="pin-hint">Enter last 4 T9 digits with one B.</div>
+
+                <div class="pin-section">
+                    <div class="pin-section-title">LENGTH</div>
+                    <div class="pin-length">
+                        <input type="text" id="pinLengthInput" placeholder="Word length" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="pin-section">
+                    <div class="pin-section-title">1 LIE (L4)</div>
+                    <div id="pinInputDisplay" class="pin-input-display">
+                        <div class="pin-input-cell"></div>
+                        <div class="pin-input-cell"></div>
+                        <div class="pin-input-cell"></div>
+                        <div class="pin-input-cell"></div>
+                    </div>
+                    <div class="pin-keypad">
+                        <button class="pin-key" data-digit="1">1</button>
+                        <button class="pin-key" data-digit="2">2</button>
+                        <button class="pin-key" data-digit="3">3</button>
+                        <button class="pin-key" data-digit="4">4</button>
+                        <button class="pin-key" data-digit="5">5</button>
+                        <button class="pin-key" data-digit="6">6</button>
+                        <button class="pin-key" data-digit="7">7</button>
+                        <button class="pin-key" data-digit="8">8</button>
+                        <button class="pin-key" data-digit="9">9</button>
+                        <button class="pin-key pin-key-blank" data-digit="BLANK">B</button>
+                        <button class="pin-key" data-digit="0">0</button>
+                        <button class="pin-key pin-key-backspace" data-action="backspace">DEL</button>
+                    </div>
+                </div>
+
+                <div class="pin-section">
+                    <div class="pin-section-title">B-IDENTITY</div>
+                    <div class="pin-possible">
+                        <div class="pin-possible-label">Possible digits for B:</div>
+                        <div id="pinPossibleDigits" class="pin-possible-list">-</div>
+                    </div>
+                </div>
+
+                <div class="pin-results-header">
+                    <span>Matches:</span> <span id="pinResultsCount">0</span>
+                </div>
+                <div id="pinResults" class="pin-results"></div>
+            </div>
+        </div>
+
         <!-- Settings Modal -->
         <div id="settingsModal" class="modal">
             <div class="modal-content">
@@ -1095,7 +1149,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=11"></script>
+    <script src="script.js?v=12.1"></script>
     <script>
         // Prevent double-tap zoom
         document.addEventListener('touchend', function(e) {
@@ -1122,6 +1176,7 @@
         document.body.addEventListener('touchmove', function(e) {
             // Allow touchmove on inputs and their containers, and scrollable containers
             if (e.target.closest('.results-container') !== null || 
+                e.target.closest('.pin-results') !== null ||
                 e.target.closest('input') !== null ||
                 e.target.closest('.position-cons-input-group') !== null ||
                 e.target.closest('.position-cons-form') !== null ||

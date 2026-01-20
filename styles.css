@@ -3953,3 +3953,274 @@ input:checked + .slider:before {
     pointer-events: none;
     user-select: none;
 } 
+
+/* PIN Performance Styles */
+.pin-performance {
+    display: none;
+    flex: 1 1 0;
+    min-height: 0;
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+    flex-direction: column;
+}
+
+.pin-button {
+    background-color: #ff9800 !important;
+    border-color: #e68900 !important;
+    color: #fff !important;
+}
+
+.pin-button:hover {
+    background-color: #f57c00 !important;
+}
+
+.pin-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.pin-title {
+    text-align: center;
+    font-size: 1.6em;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.pin-hint {
+    text-align: center;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.pin-section {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.pin-section-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+.pin-length {
+    display: flex;
+    justify-content: center;
+}
+
+#pinLengthInput {
+    width: 160px;
+    text-align: center;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.pin-input-display {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.pin-input-cell {
+    width: 48px;
+    height: 48px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    background: #fafafa;
+    color: #333;
+}
+
+.pin-input-cell.filled {
+    border-color: #1B5E20;
+    background: #e8f5e9;
+}
+
+.pin-input-cell.blank {
+    border-color: #f44336;
+    background: #f44336;
+    color: #fff;
+}
+
+.pin-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 260px;
+    margin: 0 auto;
+}
+
+.pin-key {
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #f0f0f0 !important;
+    border: 1px solid #1B5E20 !important;
+    color: #1B5E20 !important;
+    min-width: 0;
+    padding: 0;
+}
+
+.pin-key:hover {
+    background: #e0e0e0 !important;
+    transform: scale(1.02);
+}
+
+.pin-key-blank {
+    background: #f44336 !important;
+    color: #fff !important;
+    border-color: #f44336 !important;
+}
+
+.pin-key-backspace {
+    background: #455A64 !important;
+    color: #fff !important;
+    border-color: #455A64 !important;
+}
+
+.pin-possible {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.pin-possible-label {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.pin-possible-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    min-height: 34px;
+}
+
+.pin-possible-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #1B5E20;
+    background: #f0f0f0;
+    color: #1B5E20;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 36px;
+    text-align: center;
+}
+
+.pin-possible-btn.selected {
+    background-color: #87CEEB;
+    color: #fff;
+}
+
+.pin-results-header {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+.pin-results {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    -webkit-overflow-scrolling: touch;
+}
+
+.pin-results-empty {
+    text-align: center;
+    color: #666;
+    padding: 20px 10px;
+}
+
+.pin-result-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pin-result-item:last-child {
+    border-bottom: none;
+}
+
+.pin-word {
+    font-weight: bold;
+    color: #333;
+}
+
+.pin-t9 {
+    font-family: monospace;
+    letter-spacing: 1px;
+    color: #555;
+}
+
+.pin-t9-prefix {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.pin-load-more {
+    text-align: center;
+    margin: 10px 0 0;
+}
+
+.pin-load-more button {
+    background: #2196F3 !important;
+    border-color: #1976D2 !important;
+    color: #fff !important;
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .pin-content {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .pin-keypad {
+        max-width: 220px;
+        gap: 8px;
+    }
+
+    .pin-key {
+        height: 44px;
+        font-size: 16px;
+    }
+
+    .pin-input-cell {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+    }
+
+    #pinLengthInput {
+        width: 140px;
+    }
+}
